@@ -54,6 +54,7 @@ struct Ship {
     }
     
     var hitTracker: HitTracker
+    let hit = HitTracker()
 // TODO: Add a getter for sunk. Calculate the value returned using hitTracker.cellsHit.
     var sunk: Bool {
         
@@ -74,7 +75,27 @@ struct Ship {
     }
 
 // TODO: Add custom initializers
-    init(length: Int, location:GridLocation,isVertical:Bool,isWooden:Bool,hitTracker:HitTracker) {
+    init(length:Int, location: GridLocation, isVertical:Bool){
+        
+        self.length = length
+        self.location = location
+        self.isVertical = isVertical
+        self.isWooden = false
+        self.hitTracker = hit
+        
+    }
+    
+    init(length: Int, location: GridLocation, isVertical: Bool,isWooden:Bool){
+        
+        self.length = length
+        self.location = location
+        self.isVertical = isVertical
+        self.isWooden = isWooden
+        self.hitTracker = hit
+    }
+
+    
+    init(length: Int, location:GridLocation,isVertical :Bool,isWooden:Bool, hitTracker:HitTracker) {
         self.length = length
         self.hitTracker = hitTracker
         self.isVertical = isVertical
@@ -84,19 +105,59 @@ struct Ship {
 }
 
 // TODO: Change Cell protocol to PenaltyCell and add the desired properties
-protocol Cell {
+protocol PenaltyCell {
     var location: GridLocation {get}
+    var guaranteesHit :Bool {get set}
+    var penaltyText :String {get set }
 }
 
 // TODO: Adopt and implement the PenaltyCell protocol
-struct Mine: Cell {
+struct Mine: PenaltyCell {
     let location: GridLocation
+    
+    var guaranteesHit :Bool
+    var penaltyText :String
+    
+    init(location:GridLocation){
+        
+        self.location = location
+        self.guaranteesHit = true
+        self.penaltyText = "Hit Mine!! Careful!"
+    
+    }
+    
+    init(location:GridLocation, penalyText:String){
+        
+        self.location = location
+        self.guaranteesHit = false
+        self.penaltyText = penalyText
+        
+    }
+    
+    init(location:GridLocation, penalyText:String,guaranteesHit:Bool){
+        
+        self.location = location
+        self.guaranteesHit = guaranteesHit
+        self.penaltyText = penalyText
+        
+    }
 
+
+    
 }
 
 // TODO: Adopt and implement the PenaltyCell protocol
-struct SeaMonster: Cell {
+struct SeaMonster: PenaltyCell {
     let location: GridLocation
+    var guaranteesHit :Bool
+    var penaltyText: String
+    
+    init(location:GridLocation){
+        
+        self.location = location
+        self.guaranteesHit = true
+        self.penaltyText = "test"
+    }
 }
 
 class ControlCenter {
@@ -118,18 +179,20 @@ class ControlCenter {
         let xLargeShip = Ship(length: 5, location: GridLocation(x: 7, y: 2), isVertical: true, isWooden: true, hitTracker: HitTracker())
         human.addShipToGrid(xLargeShip)
         
-        let mine1 = Mine(location: GridLocation(x: 6, y: 0))
+        let mine1 = Mine(location: GridLocation(x: 6, y: 0),penalyText:"hit!! Mine")
         human.addMineToGrid(mine1)
-        
         let mine2 = Mine(location: GridLocation(x: 3, y: 3))
         human.addMineToGrid(mine2)
+
+
+
         
         let seamonster1 = SeaMonster(location: GridLocation(x: 5, y: 6))
         human.addSeamonsterToGrid(seamonster1)
         
         let seamonster2 = SeaMonster(location: GridLocation(x: 2, y: 2))
         human.addSeamonsterToGrid(seamonster2)
-        print(smallShip.cells) // check location working?
+      //  print(smallShip.cells) // check location working?
 
     }
     
